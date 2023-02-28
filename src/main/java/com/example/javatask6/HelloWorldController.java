@@ -10,19 +10,25 @@ import java.time.format.DateTimeFormatter;
 
 @RestController
 public class HelloWorldController {
-  @GetMapping("/hello")
-  public String hello() {
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-    //日本時間を取得
-    LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Tokyo"));
+  DateTimeFormatter dtfHm = DateTimeFormatter.ofPattern("HH:mm");
+  DateTimeFormatter dtfH = DateTimeFormatter.ofPattern("HH");
+  LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Tokyo"));
 
-    if (3 < now.getHour() && now.getHour() < 12) {
-      return "<ただいま日本時刻" + now.format(dtf) + "> おはようございます！今日も１日がんばろー！";
-    } else if (now.getHour() < 16) {
-      return "<ただいま日本時刻" + now.format(dtf) + "> こんにちは！";
+  //時間によって異なる挨拶を表示するメソッド
+  private String getGreetingMessage(int hour) {
+    if (3 < hour && hour < 12) {
+      return "<ただいま日本時刻" + now.format(dtfHm) + ">おはようございます！今日も１日がんばろー！";
+    } else if (hour < 16) {
+      return "<ただいま日本時刻" + now.format(dtfHm) + ">こんにちは！";
     } else {
-      return "<ただいま日本時刻" + now.format(dtf) + "> こんばんは！今日も１日おつかれさまです！";
+      return "<ただいま日本時刻" + now.format(dtfHm) + ">こんばんは！今日も１日おつかれさまです！";
     }
+  }
+
+  @GetMapping("/hello")
+  public String greeting() {
+    int hour = Integer.parseInt(now.format(dtfH));
+    return getGreetingMessage(hour);
   }
 }
 
